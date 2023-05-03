@@ -3,13 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter App</title>
+    <title>Change Variable App</title>
+    <script>
+        function changeCustomVariable() {
+            const newValue = document.getElementById("new_value").value;
+
+            if (!newValue) {
+                alert("Please enter a new value for the custom variable.");
+                return;
+            }
+
+            fetch(`/change_variable?new_value=${encodeURIComponent(newValue)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        document.getElementById("custom_variable").innerText = "Custom Variable: " + data.custom_variable;
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error updating custom variable:", error);
+                });
+        }
+    </script>
 </head>
 <body>
-    <h1>Counter: {{ counter }}</h1>
-    <form action="{{ url_for('update_counter') }}" method="POST">
-        <button type="submit" name="action" value="increment">Increment</button>
-        <button type="submit" name="action" value="decrement">Decrement</button>
-    </form>
+    <h1 id="custom_variable">Custom Variable: {{ custom_variable }}</h1>
+    <label for="new_value">Change custom variable:</label>
+    <input type="text" id="new_value" required>
+    <button onclick="changeCustomVariable()">Update Variable</button>
 </body>
 </html>

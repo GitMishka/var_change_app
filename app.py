@@ -1,26 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# Initialize the counter variable
-counter = 0
+custom_variable = "Initial value"
 
 @app.route("/")
 def home():
-    global counter
-    return render_template("index.html", counter=counter)
+    global custom_variable
+    return render_template("index.html", custom_variable=custom_variable)
 
-@app.route("/update_counter", methods=["POST"])
-def update_counter():
-    global counter
-    action = request.form.get("action")
-
-    if action == "increment":
-        counter += 1
-    elif action == "decrement":
-        counter -= 1
-
-    return redirect(url_for("home"))
+@app.route("/change_variable", methods=["GET"])
+def change_variable():
+    global custom_variable
+    new_value = request.args.get("new_value")
+    if new_value:
+        custom_variable = new_value
+        return jsonify(status="success", custom_variable=custom_variable)
+    else:
+        return jsonify(status="error", message="No value provided")
 
 if __name__ == "__main__":
     app.run(debug=True)
